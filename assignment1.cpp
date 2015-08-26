@@ -35,7 +35,7 @@ void push_vertex(double xpos, double ypos, glm::vec4 &color)
     v_colors = (glm::vec4 *) realloc(v_colors, 2 * max_vertices);
     if (!v_positions || !v_colors)
     {
-      printf("Not enough memory to allocate for vertices");
+      std::cout << "Not enough memory to allocate for vertices" << std::endl;
       return glfwTerminate();
     }
     max_vertices = 2 * max_vertices;

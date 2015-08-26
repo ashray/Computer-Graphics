@@ -42,14 +42,14 @@ namespace csX75
     if (key == GLFW_KEY_M && action == GLFW_PRESS)
     {
       current_system_state = 0;
-      printf("In modelling mode!\n");
+      std::cout << "In modelling mode!" << std::endl;
     }
 
     // Should enable modelling mode
     if (key == GLFW_KEY_I && action == GLFW_PRESS)
     {
       current_system_state = 1;
-      printf("In inspection mode!\n");
+      std::cout << "In inspection mode!" << std::endl;
     }
   }
 
@@ -61,7 +61,7 @@ namespace csX75
       double xpos;
       double ypos;
       glfwGetCursorPos (window, &xpos, &ypos);
-      printf("Cursor positions are: (%f, %f)\n", xpos, ypos);
+      std::cout << "Cursor positions are: (" <<  xpos << ", " << ypos << ")\n";
       push_vertex(int(xpos), int(ypos), glm::vec4(0.5,0.5,0.5,1.0));
     }
   }
