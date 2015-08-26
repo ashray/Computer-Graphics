@@ -19,8 +19,8 @@ GLuint vbo, vao;
 
 //-----------------------------------------------------------------
 
-// Let us say our object does not consist of more than 2048 points, we'll grow as needed
-int max_vertices = 2048, num_vertices = 0, loaded_vertices = 0;
+// Let's start with 2 points, we'll grow as needed
+int max_vertices = 2, num_vertices = 0, loaded_vertices = 0;
 //num_vertices can be used as the index of next unfilled vertex position
 
 glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
@@ -31,8 +31,8 @@ void push_vertex(double xpos, double ypos, glm::vec4 color)
   // Do we need to grow?
   if (num_vertices == max_vertices)
   {
-    v_positions = (glm::vec4 *) realloc(v_positions, 2 * max_vertices);
-    v_colors = (glm::vec4 *) realloc(v_colors, 2 * max_vertices);
+    v_positions = (glm::vec4 *) realloc(v_positions, sizeof(glm::vec4) * 2 * max_vertices);
+    v_colors = (glm::vec4 *) realloc(v_colors, sizeof(glm::vec4) * 2 * max_vertices);
     if (!v_positions || !v_colors)
     {
       std::cout << "Not enough memory to allocate for vertices" << std::endl;
