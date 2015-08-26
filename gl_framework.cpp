@@ -41,12 +41,14 @@ namespace csX75
     // Should enable modelling mode
     if (key == GLFW_KEY_M && action == GLFW_PRESS)
     {
+      current_system_state = 0;
       printf("In modelling mode!\n");
     }
 
     // Should enable modelling mode
     if (key == GLFW_KEY_I && action == GLFW_PRESS)
     {
+      current_system_state = 1;
       printf("In inspection mode!\n");
     }
   }

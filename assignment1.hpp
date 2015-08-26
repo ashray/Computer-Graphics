@@ -23,4 +23,6 @@
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
 
+int current_system_state = 2;
+
 #endif
