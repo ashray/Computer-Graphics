@@ -1,7 +1,7 @@
 /*
   A program which opens a window and draws the "color cube."
 
-  Modified from An Introduction to OpenGL Programming, 
+  Modified from An Introduction to OpenGL Programming,
   Ed Angel and Dave Shreiner, SIGGRAPH 2013
 
   Written by Parag Chaudhuri, 2015
@@ -13,6 +13,7 @@
 #define ESCAPE 27
 // Defining the DELETE Key Code
 #define DELETE 127
+#define GLFW_KEY_M 77
 
 //Include Files
 #include "glm/vec4.hpp"

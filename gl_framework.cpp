@@ -14,28 +14,43 @@ namespace csX75
     //Enable depth testing
     glEnable(GL_DEPTH_TEST);
   }
-  
+
   //!GLFW Error Callback
   void error_callback(int error, const char* description)
   {
     std::cerr<<description<<std::endl;
   }
-  
+
   //!GLFW framebuffer resize callback
   void framebuffer_size_callback(GLFWwindow* window, int width, int height)
   {
     //!Resize the viewport to fit the window size - draw to entire window
     glViewport(0, 0, width, height);
   }
-  
+
   //!GLFW keyboard callback
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
     //!Close the window if the ESC key was pressed
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
       glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+
+    // Should enable modelling mode
+    if (key == GLFW_KEY_M && action == GLFW_PRESS)
+    {
+      double *xpos;
+      double *ypos;
+      glfwGetCursorPos (*window, *xpos, *ypos);
+      printf("In modelling mode!\n");
+      printf("X position is %f, Y position is %f\n", *xpos, *ypos);
+    }
+
+    // Should enable modelling mode
+    if (key == GLFW_KEY_I && action == GLFW_PRESS)
+    {
+      printf("In inspection mode!\n");
+    }
   }
-};  
-  
-
-
+};
