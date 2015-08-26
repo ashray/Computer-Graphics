@@ -5,7 +5,7 @@ GLEWLIB= -lGLEW
 GLFWLIB = -lglfw3
 LIBS=$(OPENGLLIB) $(GLEWLIB) $(GLFWLIB)
 LDFLAGS=-L/usr/local/lib
-CPPFLAGS=-I/usr/local/include -I./
+CPPFLAGS+=-I/usr/local/include -I./
 
 BIN=assignment1
 SRCS=assignment1.cpp gl_framework.cpp shader_util.cpp
