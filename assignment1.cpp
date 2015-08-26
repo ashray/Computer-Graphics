@@ -26,7 +26,7 @@ int max_vertices = 2048, num_vertices = 0, loaded_vertices = 0;
 glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 glm::vec4 *v_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 
-void push_vertex(double xpos, double ypos, glm::vec4 &color)
+void push_vertex(double xpos, double ypos, glm::vec4 color)
 {
   // Do we need to grow?
   if (num_vertices == max_vertices)

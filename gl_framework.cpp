@@ -62,7 +62,7 @@ namespace csX75
       double ypos;
       glfwGetCursorPos (window, &xpos, &ypos);
       std::cout << "Cursor positions are: (" <<  xpos << ", " << ypos << ")\n";
-      push_vertex(int(xpos), int(ypos), glm::vec4(0.5,0.5,0.5,1.0));
+      push_vertex(xpos, ypos, glm::vec4(0.5,0.5,0.5,1.0));
     }
   }
 };

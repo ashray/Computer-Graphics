@@ -30,6 +30,6 @@ namespace csX75
 };
 
 extern int current_system_state;
-void push_vertex(int, int, glm::vec4);
+void push_vertex(double, double, glm::vec4);
 
 #endif
