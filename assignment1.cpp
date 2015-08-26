@@ -6,6 +6,9 @@
   Modified from An Introduction to OpenGL Programming,
   Ed Angel and Dave Shreiner, SIGGRAPH 2013
 
+  And sample code provided by Prof. Parag Chaudhary
+  Computer Graphics course, CS 675, Autumn 2015
+
   Written by Ashray Malhotra
 */
 
@@ -17,64 +20,44 @@ GLuint vbo, vao;
 
 //-----------------------------------------------------------------
 
-//6 faces, 2 triangles/face, 3 vertices/triangle
-const int num_vertices = 36;
+// Let us say our object does not consist of more than 20 points
+int num_vertices =20;
+glm::vec4 *v_positions = new glm::vec4[num_vertices];
+glm::vec4 *v_colors = new glm::vec4[num_vertices];
 
-//Eight vertices in homogenous coordinates
-glm::vec4 positions[8] = {
-  glm::vec4(-0.5, -0.5, 0.5, 1.0),
-  glm::vec4(-0.5, 0.5, 0.5, 1.0),
-  glm::vec4(0.5, 0.5, 0.5, 1.0),
-  glm::vec4(0.5, -0.5, 0.5, 1.0),
-  glm::vec4(-0.5, -0.5, -0.5, 1.0),
-  glm::vec4(-0.5, 0.5, -0.5, 1.0),
-  glm::vec4(0.5, 0.5, -0.5, 1.0),
-  glm::vec4(0.5, -0.5, -0.5, 1.0)
-};
-
-//RGBA colors
-glm::vec4 colors[8] = {
-  glm::vec4(0.0, 0.0, 0.0, 1.0),
-  glm::vec4(1.0, 0.0, 0.0, 1.0),
-  glm::vec4(1.0, 1.0, 0.0, 1.0),
-  glm::vec4(0.0, 1.0, 0.0, 1.0),
-  glm::vec4(0.0, 0.0, 1.0, 1.0),
-  glm::vec4(1.0, 0.0, 1.0, 1.0),
-  glm::vec4(1.0, 1.0, 1.0, 1.0),
-  glm::vec4(0.0, 1.0, 1.0, 1.0)
-};
-
-int tri_idx=0;
-glm::vec4 v_positions[num_vertices];
-glm::vec4 v_colors[num_vertices];
-
-// quad generates two triangles for each face and assigns colors to the vertices
-void quad(int a, int b, int c, int d)
+void initializePositions(void)
 {
-  v_colors[tri_idx] = colors[a]; v_positions[tri_idx] = positions[a]; tri_idx++;
-  v_colors[tri_idx] = colors[b]; v_positions[tri_idx] = positions[b]; tri_idx++;
-  v_colors[tri_idx] = colors[c]; v_positions[tri_idx] = positions[c]; tri_idx++;
-  v_colors[tri_idx] = colors[a]; v_positions[tri_idx] = positions[a]; tri_idx++;
-  v_colors[tri_idx] = colors[c]; v_positions[tri_idx] = positions[c]; tri_idx++;
-  v_colors[tri_idx] = colors[d]; v_positions[tri_idx] = positions[d]; tri_idx++;
- }
+  // Initialize all the vertex positions to zero
+  for (int i=0; i<num_vertices; i++)
+  {
+    v_positions[i] = glm::vec4(0.0,0.0,0.0,1.0);
+  }
 
-// generate 12 triangles: 36 vertices and 36 colors
-void colorcube(void)
-{
-    quad( 1, 0, 3, 2 );
-    quad( 2, 3, 7, 6 );
-    quad( 3, 0, 4, 7 );
-    quad( 6, 5, 1, 2 );
-    quad( 4, 5, 6, 7 );
-    quad( 5, 4, 0, 1 );
+  // Setting the default color to white
+  for (int i=0; i<num_vertices; i++)
+  {
+    v_colors[i] = glm::vec4(1.0,1.0,1.0,1.0);
+  }
+
 }
+//-----------------------------------------------------------------
+
+//-----------------------------------------------------------------
+// Program Architecture -
+// Since we need the ability to be able to add points to the
+// screen, this is not a Typical Graphics problem since we don't
+// have the model already. We have multiple choices now on how to
+// pass data to the graphics pipeline(when to handover data to GPUs)
+// The approach we are taking here is that we are passing all the
+// vertices again to the GPU once we add a new point, this makes
+// managing variables simpler in the GPU side and also for the size
+// of the models that we plan to deal with, will not affect the
+// performance of the system.
 //-----------------------------------------------------------------
 
 void initBuffersGL(void)
 {
-  colorcube();
-
+  initializePositions();
   //Ask GL for a Vertex Attribute Object (vao)
   glGenVertexArrays (1, &vao);
   //Set it as the current array to be used by binding it
@@ -82,8 +65,10 @@ void initBuffersGL(void)
 
   //Ask GL for a Vertex Buffer Object (vbo)
   glGenBuffers (1, &vbo);
+
   //Set it as the current buffer to be used by binding it
   glBindBuffer (GL_ARRAY_BUFFER, vbo);
+
   //Copy the points into the current buffer
   glBufferData (GL_ARRAY_BUFFER, sizeof (v_positions) + sizeof(v_colors), NULL, GL_STATIC_DRAW);
   glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(v_positions), v_positions );
@@ -115,7 +100,7 @@ void renderGL(void)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Draw
-  glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+  glDrawArrays(GL_TRIANGLE_STRIP , 0, num_vertices);
 
 }
 
@@ -195,5 +180,10 @@ int main(int argc, char** argv)
   glfwTerminate();
   return 0;
 }
+
+// ---------Remember to delete the manually allocated variables--------
+// delete[] v_positions;
+// delete[] v_colors;
+//-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
