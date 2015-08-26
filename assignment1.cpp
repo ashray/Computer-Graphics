@@ -13,35 +13,39 @@
 */
 
 #include "assignment1.hpp"
-// #include <glfw3.h>
-
-
 
 GLuint shaderProgram;
 GLuint vbo, vao;
 
 //-----------------------------------------------------------------
 
-// Let us say our object does not consist of more than 20 points
-int num_vertices =20;
-glm::vec4 *v_positions = new glm::vec4[num_vertices];
-glm::vec4 *v_colors = new glm::vec4[num_vertices];
+// Let us say our object does not consist of more than 2048 points, we'll grow as needed
+int max_vertices = 2048, num_vertices = 0, loaded_vertices = 0;
+//num_vertices can be used as the index of next unfilled vertex position
 
-void initializePositions(void)
+glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
+glm::vec4 *v_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
+
+void push_vertex(double xpos, double ypos, glm::vec4 &color)
 {
-  // Initialize all the vertex positions to zero
-  for (int i=0; i<num_vertices; i++)
+  // Do we need to grow?
+  if (num_vertices == max_vertices)
   {
-    v_positions[i] = glm::vec4(0.0,0.0,0.0,1.0);
+    v_positions = (glm::vec4 *) realloc(v_positions, 2 * max_vertices);
+    v_colors = (glm::vec4 *) realloc(v_colors, 2 * max_vertices);
+    if (!v_positions || !v_colors)
+    {
+      printf("Not enough memory to allocate for vertices");
+      return glfwTerminate();
+    }
+    max_vertices = 2 * max_vertices;
   }
 
-  // Setting the default color to white
-  for (int i=0; i<num_vertices; i++)
-  {
-    v_colors[i] = glm::vec4(1.0,1.0,1.0,1.0);
-  }
-
+  v_positions[num_vertices] = glm::vec4(2*xpos/WIDTH - 1, - (2*ypos/WIDTH - 1), 0.0, 1.0); // NDCS
+  v_colors[num_vertices] = color;
+  num_vertices++; // Don't forget to increment
 }
+
 //-----------------------------------------------------------------
 
 //-----------------------------------------------------------------
@@ -59,7 +63,6 @@ void initializePositions(void)
 
 void initBuffersGL(void)
 {
-  initializePositions();
   //Ask GL for a Vertex Attribute Object (vao)
   glGenVertexArrays (1, &vao);
   //Set it as the current array to be used by binding it
@@ -72,9 +75,10 @@ void initBuffersGL(void)
   glBindBuffer (GL_ARRAY_BUFFER, vbo);
 
   //Copy the points into the current buffer
-  glBufferData (GL_ARRAY_BUFFER, sizeof (v_positions) + sizeof(v_colors), NULL, GL_STATIC_DRAW);
-  glBufferSubData( GL_ARRAY_BUFFER, 0, sizeof(v_positions), v_positions );
-  glBufferSubData( GL_ARRAY_BUFFER, sizeof(v_positions), sizeof(v_colors), v_colors );
+  size_t size = num_vertices * sizeof(glm::vec4);
+  glBufferData (GL_ARRAY_BUFFER, size * 2, NULL, GL_STATIC_DRAW); // * 2 because both v_positions and v_colors
+  glBufferSubData( GL_ARRAY_BUFFER, 0, size, v_positions );
+  glBufferSubData( GL_ARRAY_BUFFER, size, size, v_colors );
 
   // Load shaders and use the resulting shader program
   std::string vertex_shader_file("vshader_assignment1.glsl");
@@ -94,7 +98,9 @@ void initBuffersGL(void)
 
   GLuint vColor = glGetAttribLocation( shaderProgram, "vColor" );
   glEnableVertexAttribArray( vColor );
-  glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(v_positions)) );
+  glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(size) );
+
+  loaded_vertices = num_vertices;
 }
 
 void renderGL(void)
@@ -102,7 +108,7 @@ void renderGL(void)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Draw
-  glDrawArrays(GL_TRIANGLE_STRIP , 0, num_vertices);
+  glDrawArrays(GL_TRIANGLE_STRIP , 0, loaded_vertices);
 
 }
 
@@ -127,7 +133,7 @@ int main(int argc, char** argv)
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   //! Create a windowed mode window and its OpenGL context
-  window = glfwCreateWindow(512, 512, "Modelling Viewing pipeline", NULL, NULL);
+  window = glfwCreateWindow(WIDTH, HEIGHT, "Modelling Viewing pipeline", NULL, NULL);
   if (!window)
     {
       glfwTerminate();
@@ -155,6 +161,10 @@ int main(int argc, char** argv)
 
   //Keyboard Callback
   glfwSetKeyCallback(window, csX75::key_callback);
+
+  //Mouse Callback
+  glfwSetMouseButtonCallback(window, csX75::mouse_button_callback);
+
   //Framebuffer resize callback
   glfwSetFramebufferSizeCallback(window, csX75::framebuffer_size_callback);
 
@@ -167,8 +177,7 @@ int main(int argc, char** argv)
 
   // Loop until the user closes the window
   while (glfwWindowShouldClose(window) == 0)
-    {
-
+  {
       // Render here
       renderGL();
 
@@ -177,6 +186,8 @@ int main(int argc, char** argv)
 
       // Poll for and process events
       glfwPollEvents();
+
+      if (loaded_vertices != num_vertices) initBuffersGL(); // Inefficient, I know.
     }
 
   glfwTerminate();

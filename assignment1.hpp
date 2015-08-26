@@ -15,9 +15,11 @@
 #define DELETE 127
 #define GLFW_KEY_M 77
 
+// Dimensions of the window
+#define WIDTH 512
+#define HEIGHT 512
+
 //Include Files
-#include "glm/vec4.hpp"
-#include "glm/mat4x4.hpp"
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
 

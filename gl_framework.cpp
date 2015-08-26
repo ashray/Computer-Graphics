@@ -32,6 +32,7 @@ namespace csX75
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
     //!Close the window if the ESC key was pressed
+
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
       glfwSetWindowShouldClose(window, GL_TRUE);
@@ -40,17 +41,26 @@ namespace csX75
     // Should enable modelling mode
     if (key == GLFW_KEY_M && action == GLFW_PRESS)
     {
-      double *xpos;
-      double *ypos;
-      glfwGetCursorPos (*window, *xpos, *ypos);
       printf("In modelling mode!\n");
-      printf("X position is %f, Y position is %f\n", *xpos, *ypos);
     }
 
     // Should enable modelling mode
     if (key == GLFW_KEY_I && action == GLFW_PRESS)
     {
       printf("In inspection mode!\n");
+    }
+  }
+
+  //!GLFW mouse callback
+  void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+  {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && current_system_state==0)
+    {
+      double xpos;
+      double ypos;
+      glfwGetCursorPos (window, &xpos, &ypos);
+      printf("Cursor positions are: (%f, %f)\n", xpos, ypos);
+      push_vertex(int(xpos), int(ypos), glm::vec4(0.5,0.5,0.5,1.0));
     }
   }
 };
