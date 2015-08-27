@@ -56,13 +56,26 @@ namespace csX75
   //!GLFW mouse callback
   void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
   {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && current_system_state==0)
+    int getLeftShiftKeyState;
+    int getRightShiftKeyState;
+    getLeftShiftKeyState = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+    getRightShiftKeyState = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
+
+    // if key is pressed, then glfwGetKey returns GLFW_RELEASE which is basically 1. If the key is not pressed it returns 0.
+    if (getLeftShiftKeyState==1 || getRightShiftKeyState==1)
     {
-      double xpos;
-      double ypos;
-      glfwGetCursorPos (window, &xpos, &ypos);
-      std::cout << "Cursor positions are: (" <<  xpos << ", " << ypos << ")\n";
-      push_vertex(xpos, ypos, glm::vec4(0.5,0.5,0.5,1.0));
+      // TODO - Remove the last added point
+    }
+    else
+    {
+      if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && current_system_state==0)
+      {
+        double xpos;
+        double ypos;
+        glfwGetCursorPos (window, &xpos, &ypos);
+        std::cout << "Cursor positions are: (" <<  xpos << ", " << ypos << ")\n";
+        push_vertex(xpos, ypos, glm::vec4(0.5,0.5,0.5,1.0));
+      }
     }
   }
 };
