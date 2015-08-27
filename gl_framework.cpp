@@ -32,7 +32,6 @@ namespace csX75
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
     //!Close the window if the ESC key was pressed
-
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
       glfwSetWindowShouldClose(window, GL_TRUE);
@@ -51,6 +50,33 @@ namespace csX75
       current_system_state = 1;
       std::cout << "In inspection mode!" << std::endl;
     }
+
+    // Write triangle values to disk
+    if (key == GLFW_KEY_K && action == GLFW_PRESS)
+    {
+      std::cout << "Pressed key k" << std::endl;
+
+      FILE *outputFile;
+      std::cout << "Please give a filename: ";
+      std::string filename;
+      std::cin >> filename;
+      filename.append(".raw");
+      outputFile = fopen(filename.c_str(), "w");
+      for (int i = 0; i<num_vertices; i++)
+      {
+        fprintf(outputFile, "%lf %lf %lf %lf %lf %lf\n", v_positions[i].x,
+          v_positions[i].y, v_positions[i].z,
+          v_colors[i].r, v_colors[i].g, v_colors[i].b);
+      }
+      fclose(outputFile);
+      std::cout << "Vertex data successfully exported\n";
+    }
+
+    //
+    if (key == GLFW_KEY_L && action == GLFW_PRESS)
+    {
+    }
+
   }
 
   //!GLFW mouse callback
@@ -61,11 +87,12 @@ namespace csX75
     getLeftShiftKeyState = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
     getRightShiftKeyState = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
 
-    // if key is pressed, then glfwGetKey returns GLFW_RELEASE which is basically 1. If the key is not pressed it returns 0.
+
 
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && current_system_state==0)
     {
+      // If key is pressed, then glfwGetKey returns GLFW_RELEASE which is 1. If the key is not pressed it returns 0.
       // Remove the last added point
       if (getLeftShiftKeyState==1 || getRightShiftKeyState==1)
       {

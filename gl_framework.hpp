@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <fstream>  // library that contains file input/output functions
 
 #include "glm/vec4.hpp"
 #include "glm/mat4x4.hpp"
@@ -31,6 +32,8 @@ namespace csX75
 
 extern int current_system_state;
 extern int num_vertices;
+extern glm::vec4 *v_positions;
+extern glm::vec4 *v_colors;
 void push_vertex(double, double, glm::vec4);
 
 #endif
