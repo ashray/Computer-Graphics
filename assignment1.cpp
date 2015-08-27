@@ -193,10 +193,3 @@ int main(int argc, char** argv)
   glfwTerminate();
   return 0;
 }
-
-// ---------Remember to delete the manually allocated variables--------
-// delete[] v_positions;
-// delete[] v_colors;
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------

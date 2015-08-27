@@ -62,13 +62,17 @@ namespace csX75
     getRightShiftKeyState = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
 
     // if key is pressed, then glfwGetKey returns GLFW_RELEASE which is basically 1. If the key is not pressed it returns 0.
-    if (getLeftShiftKeyState==1 || getRightShiftKeyState==1)
+
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && current_system_state==0)
     {
-      // TODO - Remove the last added point
-    }
-    else
-    {
-      if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && current_system_state==0)
+      // Remove the last added point
+      if (getLeftShiftKeyState==1 || getRightShiftKeyState==1)
+      {
+        num_vertices = num_vertices - 1;
+      }
+      // Add a new vertex
+      else
       {
         double xpos;
         double ypos;
