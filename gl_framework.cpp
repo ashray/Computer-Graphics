@@ -54,8 +54,6 @@ namespace csX75
     // Write triangle values to disk
     if (key == GLFW_KEY_K && action == GLFW_PRESS)
     {
-      std::cout << "Pressed key k" << std::endl;
-
       FILE *outputFile;
       std::cout << "Please give a filename: ";
       std::string filename;
@@ -72,11 +70,28 @@ namespace csX75
       std::cout << "Vertex data successfully exported\n";
     }
 
-    //
+    // Loads vertex positions from disk
     if (key == GLFW_KEY_L && action == GLFW_PRESS)
     {
+      // We overwrite the existing model
+      num_vertices=0;
+      double d[6];
+      std::cout << "Please give a filename: ";
+      std::string filename;
+      std::cin >> filename;
+      filename.append(".raw");
+      FILE* inputFile = fopen(filename.c_str(), "r");
+      while(!feof(inputFile))
+      {
+        fscanf (inputFile, "%lf %lf %lf %lf %lf %lf\n", &d[0], &d[1], &d[2], &d[3], &d[4], &d[5]);
+        ensureRoomForVertex();
+        v_positions[num_vertices] = glm::vec4(d[0], d[1], d[2], 1);
+        v_colors[num_vertices] = glm::vec4(d[3], d[4], d[5], 1);
+        num_vertices++;
+      }
+      fclose(inputFile);
+      std::cout << "Loading model successful\n" << std::endl;
     }
-
   }
 
   //!GLFW mouse callback

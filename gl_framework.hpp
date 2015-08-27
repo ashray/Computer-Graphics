@@ -34,6 +34,8 @@ extern int current_system_state;
 extern int num_vertices;
 extern glm::vec4 *v_positions;
 extern glm::vec4 *v_colors;
+void ensureRoomForVertex(void);
 void push_vertex(double, double, glm::vec4);
+void push_vertex(double, double, double, glm::vec4);
 
 #endif

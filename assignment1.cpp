@@ -26,7 +26,7 @@ int max_vertices = 2, num_vertices = 0, loaded_vertices = 0;
 glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 glm::vec4 *v_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 
-void push_vertex(double xpos, double ypos, glm::vec4 color)
+void ensureRoomForVertex(void)
 {
   // Do we need to grow?
   if (num_vertices == max_vertices)
@@ -40,8 +40,17 @@ void push_vertex(double xpos, double ypos, glm::vec4 color)
     }
     max_vertices = 2 * max_vertices;
   }
+}
 
-  v_positions[num_vertices] = glm::vec4(2*xpos/WIDTH - 1, - (2*ypos/WIDTH - 1), 0.0, 1.0); // NDCS
+void push_vertex(double xpos, double ypos, glm::vec4 color)
+{
+  push_vertex(xpos, ypos, 0.0, color);
+}
+
+void push_vertex(double xpos, double ypos, double zpos, glm::vec4 color)
+{
+  ensureRoomForVertex();
+  v_positions[num_vertices] = glm::vec4(2*xpos/WIDTH - 1, - (2*ypos/WIDTH - 1), 2*zpos/WIDTH - 1, 1.0); // TODO ensure z coordinates work correctly
   v_colors[num_vertices] = color;
   num_vertices++; // Don't forget to increment
 }
