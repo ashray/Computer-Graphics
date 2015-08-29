@@ -29,10 +29,10 @@ int refresh_required = 0;
 glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 glm::vec4 *v_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 
-void ensureRoomForVertex(void)
+// Decide do we need to grow?
+void ensureRoomForVertex(int numberOfVertices)
 {
-  // Do we need to grow?
-  if (num_vertices == max_vertices)
+  if (numberOfVertices == max_vertices)
   {
     v_positions = (glm::vec4 *) realloc(v_positions, sizeof(glm::vec4) * 2 * max_vertices);
     v_colors = (glm::vec4 *) realloc(v_colors, sizeof(glm::vec4) * 2 * max_vertices);
@@ -43,6 +43,11 @@ void ensureRoomForVertex(void)
     }
     max_vertices = 2 * max_vertices;
   }
+}
+
+void ensureRoomForVertex(void)
+{
+  ensureRoomForVertex(num_vertices);
 }
 
 void push_vertex(double xpos, double ypos, glm::vec4 color)
@@ -210,7 +215,8 @@ int main(int argc, char** argv)
       // Poll for and process events
       glfwPollEvents();
       if (refresh_required==1) initBuffersGL();
-      if (loaded_vertices != num_vertices) initBuffersGL(); // Inefficient, I know.
+      if ((loaded_vertices != num_vertices) && (refresh_required!=2)) initBuffersGL();
+      // if (refresh_required==2) makeNewVAO();
     }
 
   glfwTerminate();
