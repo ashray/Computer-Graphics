@@ -15,14 +15,17 @@
 #include "assignment1.hpp"
 
 GLuint shaderProgram;
-GLuint vbo, vao;
+// GLuint vbo1, vao1;
+// GLuint vbo2, vao2;
+GLuint vao;
+GLuint vbo[2];
 
 //-----------------------------------------------------------------
 
 // Let's start with 2 points, we'll grow as needed
 int max_vertices = 2, num_vertices = 0, loaded_vertices = 0;
 //num_vertices can be used as the index of next unfilled vertex position
-
+int refresh_required = 0;
 glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 glm::vec4 *v_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 
@@ -72,23 +75,6 @@ void push_vertex(double xpos, double ypos, double zpos, glm::vec4 color)
 
 void initBuffersGL(void)
 {
-  //Ask GL for a Vertex Attribute Object (vao)
-  glGenVertexArrays (1, &vao);
-  //Set it as the current array to be used by binding it
-  glBindVertexArray (vao);
-
-  //Ask GL for a Vertex Buffer Object (vbo)
-  glGenBuffers (1, &vbo);
-
-  //Set it as the current buffer to be used by binding it
-  glBindBuffer (GL_ARRAY_BUFFER, vbo);
-
-  //Copy the points into the current buffer
-  size_t size = num_vertices * sizeof(glm::vec4);
-  glBufferData (GL_ARRAY_BUFFER, size * 2, NULL, GL_STATIC_DRAW); // * 2 because both v_positions and v_colors
-  glBufferSubData( GL_ARRAY_BUFFER, 0, size, v_positions );
-  glBufferSubData( GL_ARRAY_BUFFER, size, size, v_colors );
-
   // Load shaders and use the resulting shader program
   std::string vertex_shader_file("vshader_assignment1.glsl");
   std::string fragment_shader_file("fshader_assignment1.glsl");
@@ -99,15 +85,35 @@ void initBuffersGL(void)
 
   shaderProgram = csX75::CreateProgramGL(shaderList);
   glUseProgram( shaderProgram );
+  // Complete shader inclusion code
 
-  // set up vertex arrays
+  //Ask GL for a Vertex Attribute Object (vao)
+  glGenVertexArrays (1, &vao);
+  //Set it as the current array to be used by binding it
+  glBindVertexArray (vao);
+
+  //Ask GL for a Vertex Buffer Object (vbo)
+  glGenBuffers (2, vbo);
+
+  //Set it as the current buffer to be used by binding it
+  glBindBuffer (GL_ARRAY_BUFFER, vbo[0]);
+
+  //Copy the points into the current buffer
+  size_t size = num_vertices * sizeof(glm::vec4);
+  glBufferData (GL_ARRAY_BUFFER, size, v_positions, GL_STATIC_DRAW);
+
   GLuint vPosition = glGetAttribLocation( shaderProgram, "vPosition" );
   glEnableVertexAttribArray( vPosition );
-  glVertexAttribPointer( vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0) );
+  glVertexAttribPointer( vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
+  glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+
+  glBufferData (GL_ARRAY_BUFFER, size, v_colors, GL_STATIC_DRAW);
+
+  // Set it as the current buffer to be used by binding it
   GLuint vColor = glGetAttribLocation( shaderProgram, "vColor" );
   glEnableVertexAttribArray( vColor );
-  glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(size) );
+  glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
   loaded_vertices = num_vertices;
 }
@@ -195,7 +201,7 @@ int main(int argc, char** argv)
 
       // Poll for and process events
       glfwPollEvents();
-
+      if (refresh_required==1) initBuffersGL();
       if (loaded_vertices != num_vertices) initBuffersGL(); // Inefficient, I know.
     }
 
