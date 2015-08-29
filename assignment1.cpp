@@ -73,9 +73,9 @@ void push_vertex(double xpos, double ypos, double zpos, glm::vec4 color)
 // performance of the system.
 //-----------------------------------------------------------------
 
-void initBuffersGL(void)
+// Links the shader files correctly
+void initializeShader(void)
 {
-  // Load shaders and use the resulting shader program
   std::string vertex_shader_file("vshader_assignment1.glsl");
   std::string fragment_shader_file("fshader_assignment1.glsl");
 
@@ -85,6 +85,13 @@ void initBuffersGL(void)
 
   shaderProgram = csX75::CreateProgramGL(shaderList);
   glUseProgram( shaderProgram );
+}
+
+// Initalises buffers to pass data to shaders
+void initBuffersGL(void)
+{
+  // Load shaders and use the resulting shader program
+  initializeShader();
   // Complete shader inclusion code
 
   //Ask GL for a Vertex Attribute Object (vao)
@@ -118,6 +125,7 @@ void initBuffersGL(void)
   loaded_vertices = num_vertices;
 }
 
+// Render the data to the screen(assuming data has already been transferred to the shaders)
 void renderGL(void)
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
