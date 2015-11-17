@@ -15,7 +15,10 @@
 #include "assignment1.hpp"
 
 GLuint shaderProgram;
-GLuint vbo, vao;
+// GLuint vbo1, vao1;
+// GLuint vbo2, vao2;
+GLuint vao;
+GLuint vbo[2];
 
 //-----------------------------------------------------------------
 
@@ -26,10 +29,10 @@ int refresh_required = 0;
 glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 glm::vec4 *v_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 
-void ensureRoomForVertex(void)
+// Decide do we need to grow?
+void ensureRoomForVertex(int numberOfVertices)
 {
-  // Do we need to grow?
-  if (num_vertices == max_vertices)
+  if (numberOfVertices == max_vertices)
   {
     v_positions = (glm::vec4 *) realloc(v_positions, sizeof(glm::vec4) * 2 * max_vertices);
     v_colors = (glm::vec4 *) realloc(v_colors, sizeof(glm::vec4) * 2 * max_vertices);
@@ -40,6 +43,11 @@ void ensureRoomForVertex(void)
     }
     max_vertices = 2 * max_vertices;
   }
+}
+
+void ensureRoomForVertex(void)
+{
+  ensureRoomForVertex(num_vertices);
 }
 
 void push_vertex(double xpos, double ypos, glm::vec4 color)
@@ -70,26 +78,9 @@ void push_vertex(double xpos, double ypos, double zpos, glm::vec4 color)
 // performance of the system.
 //-----------------------------------------------------------------
 
-void initBuffersGL(void)
+// Links the shader files correctly
+void initializeShader(void)
 {
-  //Ask GL for a Vertex Attribute Object (vao)
-  glGenVertexArrays (1, &vao);
-  //Set it as the current array to be used by binding it
-  glBindVertexArray (vao);
-
-  //Ask GL for a Vertex Buffer Object (vbo)
-  glGenBuffers (1, &vbo);
-
-  //Set it as the current buffer to be used by binding it
-  glBindBuffer (GL_ARRAY_BUFFER, vbo);
-
-  //Copy the points into the current buffer
-  size_t size = num_vertices * sizeof(glm::vec4);
-  glBufferData (GL_ARRAY_BUFFER, size * 2, NULL, GL_STATIC_DRAW); // * 2 because both v_positions and v_colors
-  glBufferSubData( GL_ARRAY_BUFFER, 0, size, v_positions );
-  glBufferSubData( GL_ARRAY_BUFFER, size, size, v_colors );
-
-  // Load shaders and use the resulting shader program
   std::string vertex_shader_file("vshader_assignment1.glsl");
   std::string fragment_shader_file("fshader_assignment1.glsl");
 
@@ -99,19 +90,47 @@ void initBuffersGL(void)
 
   shaderProgram = csX75::CreateProgramGL(shaderList);
   glUseProgram( shaderProgram );
+}
 
-  // set up vertex arrays
+// Initalises buffers to pass data to shaders
+void initBuffersGL(void)
+{
+  // Load shaders and use the resulting shader program
+  initializeShader();
+  // Complete shader inclusion code
+
+  //Ask GL for a Vertex Attribute Object (vao)
+  glGenVertexArrays (1, &vao);
+  //Set it as the current array to be used by binding it
+  glBindVertexArray (vao);
+
+  //Ask GL for a Vertex Buffer Object (vbo)
+  glGenBuffers (2, vbo);
+
+  //Set it as the current buffer to be used by binding it
+  glBindBuffer (GL_ARRAY_BUFFER, vbo[0]);
+
+  //Copy the points into the current buffer
+  size_t size = num_vertices * sizeof(glm::vec4);
+  glBufferData (GL_ARRAY_BUFFER, size, v_positions, GL_STATIC_DRAW);
+
   GLuint vPosition = glGetAttribLocation( shaderProgram, "vPosition" );
   glEnableVertexAttribArray( vPosition );
-  glVertexAttribPointer( vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0) );
+  glVertexAttribPointer( vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
+  glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+
+  glBufferData (GL_ARRAY_BUFFER, size, v_colors, GL_STATIC_DRAW);
+
+  // Set it as the current buffer to be used by binding it
   GLuint vColor = glGetAttribLocation( shaderProgram, "vColor" );
   glEnableVertexAttribArray( vColor );
-  glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(size) );
+  glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 
   loaded_vertices = num_vertices;
 }
 
+// Render the data to the screen(assuming data has already been transferred to the shaders)
 void renderGL(void)
 {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -196,7 +215,8 @@ int main(int argc, char** argv)
       // Poll for and process events
       glfwPollEvents();
       if (refresh_required==1) initBuffersGL();
-      if (loaded_vertices != num_vertices) initBuffersGL(); // Inefficient, I know.
+      //if (loaded_vertices != num_vertices) initBuffersGL(); // Inefficient, I know.
+      if ((loaded_vertices != num_vertices) && (refresh_required!=2)) initBuffersGL();
     }
 
   glfwTerminate();

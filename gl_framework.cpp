@@ -217,8 +217,9 @@ namespace csX75
     // Loads vertex positions from disk
     if (key == GLFW_KEY_L && action == GLFW_PRESS)
     {
+      int new_vertices_count=0;
+      refresh_required = 1;
       // We overwrite the existing model
-      num_vertices=0;
       double d[6];
       std::cout << "Please give a filename: ";
       std::string filename;
@@ -228,13 +229,14 @@ namespace csX75
       while(!feof(inputFile))
       {
         fscanf (inputFile, "%lf %lf %lf %lf %lf %lf\n", &d[0], &d[1], &d[2], &d[3], &d[4], &d[5]);
-        ensureRoomForVertex();
-        v_positions[num_vertices] = glm::vec4(d[0], d[1], d[2], 1);
-        v_colors[num_vertices] = glm::vec4(d[3], d[4], d[5], 1);
-        num_vertices++;
+        ensureRoomForVertex(num_vertices+new_vertices_count);
+        v_positions[num_vertices+new_vertices_count] = glm::vec4(d[0], d[1], d[2], 1);
+        v_colors[num_vertices+new_vertices_count] = glm::vec4(d[3], d[4], d[5], 1);
+        new_vertices_count++;
       }
       fclose(inputFile);
       std::cout << "Loading model successful\n" << std::endl;
+      num_vertices = num_vertices + new_vertices_count;
     }
   }
 
