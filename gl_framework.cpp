@@ -70,6 +70,150 @@ namespace csX75
       std::cout << "Vertex data successfully exported\n";
     }
 
+    // Rotates model about x axis
+    if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+    {
+      glm::mat4 v_rotate;
+      v_rotate = glm::rotate(glm::mat4(1.0f), glm::radians(ROTATION_ANGLE), glm::vec3(1.0, 0.0, 0.0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_rotate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Rotates model about x axis
+    if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+    {
+      glm::mat4 v_rotate;
+      v_rotate = glm::rotate(glm::mat4(1.0f), glm::radians(-ROTATION_ANGLE), glm::vec3(1.0, 0.0, 0.0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_rotate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Rotates model about y axis
+    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+    {
+      glm::mat4 v_rotate;
+      v_rotate = glm::rotate(glm::mat4(1.0f), glm::radians(ROTATION_ANGLE), glm::vec3(0.0, 1.0, 0.0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_rotate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Rotates model about y axis
+    if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+    {
+      glm::mat4 v_rotate;
+      v_rotate = glm::rotate(glm::mat4(1.0f), glm::radians(-ROTATION_ANGLE), glm::vec3(0.0, 1.0, 0.0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_rotate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Rotates model about z axis
+    if (key == GLFW_KEY_PAGE_UP && action == GLFW_PRESS)
+    {
+      glm::mat4 v_rotate;
+      v_rotate = glm::rotate(glm::mat4(1.0f), glm::radians(ROTATION_ANGLE), glm::vec3(0.0, 0.0, 1.0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_rotate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Rotates model about z axis
+    if (key == GLFW_KEY_PAGE_DOWN && action == GLFW_PRESS)
+    {
+      glm::mat4 v_rotate;
+      v_rotate = glm::rotate(glm::mat4(1.0f), glm::radians(-ROTATION_ANGLE), glm::vec3(0.0, 0.0, 1.0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_rotate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Translates model about y axis
+    if (key == GLFW_KEY_W && action == GLFW_PRESS)
+    {
+      glm::mat4 v_translate;
+      v_translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, TRANSLATION_DISTANCE, 0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_translate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Translates model about y axis
+    if (key == GLFW_KEY_S && action == GLFW_PRESS)
+    {
+      glm::mat4 v_translate;
+      v_translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, -TRANSLATION_DISTANCE, 0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_translate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Translates model about x axis
+    if (key == GLFW_KEY_A && action == GLFW_PRESS)
+    {
+      glm::mat4 v_translate;
+      v_translate = glm::translate(glm::mat4(1.0f), glm::vec3(TRANSLATION_DISTANCE, 0, 0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_translate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Translates model about x axis
+    if (key == GLFW_KEY_D && action == GLFW_PRESS)
+    {
+      glm::mat4 v_translate;
+      v_translate = glm::translate(glm::mat4(1.0f), glm::vec3(-TRANSLATION_DISTANCE, 0, 0));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_translate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Translates model about x axis
+    if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+    {
+      glm::mat4 v_translate;
+      v_translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, TRANSLATION_DISTANCE));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_translate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
+    // Translates model about x axis
+    if (key == GLFW_KEY_X && action == GLFW_PRESS)
+    {
+      glm::mat4 v_translate;
+      v_translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -TRANSLATION_DISTANCE));
+      for (int i = 0; i<num_vertices; i++)
+      {
+        v_positions[i] = v_translate*v_positions[i];
+      }
+      refresh_required = 1;
+    }
+
     // Loads vertex positions from disk
     if (key == GLFW_KEY_L && action == GLFW_PRESS)
     {
@@ -101,9 +245,6 @@ namespace csX75
     int getRightShiftKeyState;
     getLeftShiftKeyState = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
     getRightShiftKeyState = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
-
-
-
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && current_system_state==0)
     {

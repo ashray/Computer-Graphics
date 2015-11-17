@@ -22,7 +22,7 @@ GLuint vbo, vao;
 // Let's start with 2 points, we'll grow as needed
 int max_vertices = 2, num_vertices = 0, loaded_vertices = 0;
 //num_vertices can be used as the index of next unfilled vertex position
-
+int refresh_required = 0;
 glm::vec4 *v_positions = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 glm::vec4 *v_colors = (glm::vec4 *)malloc(sizeof(glm::vec4) * max_vertices);
 
@@ -117,7 +117,7 @@ void renderGL(void)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Draw
-  glDrawArrays(GL_TRIANGLE_FAN , 0, loaded_vertices);
+  glDrawArrays(GL_TRIANGLE_STRIP , 0, loaded_vertices);
 
 }
 
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
   if (!glfwInit())
     return -1;
 
-  //We want OpenGL 4.0
+  //We want OpenGL 4.1
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   //This is for MacOSX - can be omitted otherwise
@@ -195,7 +195,7 @@ int main(int argc, char** argv)
 
       // Poll for and process events
       glfwPollEvents();
-
+      if (refresh_required==1) initBuffersGL();
       if (loaded_vertices != num_vertices) initBuffersGL(); // Inefficient, I know.
     }
 
